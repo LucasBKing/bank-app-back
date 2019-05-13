@@ -6,7 +6,7 @@ let apiRoutes = require('./routes/index');
 const app = express();
 
 app.use(cors());
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
 var port = process.env.PORT || 4200;
