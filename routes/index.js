@@ -4,6 +4,8 @@ let userController = require('../controllers/userController');
 
 router.use(cors());
 
+process.env.SECRET_KEY = 'secret';
+
 //Set default API response
 router.get('/', (req, res) => {
     res.json({
@@ -28,5 +30,9 @@ router.route('/account_login')
 router.route('/account_bank')
     .get(userController.indexAccountsBank)
     .post(userController.createAccountBank);
+
+router.route('/login')
+    .get(userController.loginAccount);
+
 
 module.exports = router;
