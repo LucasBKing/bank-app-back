@@ -31,8 +31,17 @@ router.route('/account_bank')
     .get(userController.indexAccountsBank)
     .post(userController.createAccountBank);
 
+router.route('/account_bank_by_id')
+    .get(userController.getAccountBankByID);
+
 router.route('/login')
     .get(userController.loginAccount);
+
+router.route('/insert_deposit')
+    .post(userController.insertDeposit);
+
+router.route('/update_debit_balance')
+    .post(userController.udpateDebitBalance);
 
 
 module.exports = router;

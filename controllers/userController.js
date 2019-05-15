@@ -56,10 +56,9 @@ exports.indexAccountsLogin = (req, res) => {
 // Getting an specific login account
 exports.loginAccount = (req, res) => {
     const { login_name, password } = req.query;
-      
     (async () => {
         try {
-            await db_connection.query(`SELECT login_name, password_login FROM AccountsLogin WHERE login_name='${login_name}'`, (err, results) => {
+            await db_connection.query(`SELECT login_name, password_login, user_id FROM AccountsLogin WHERE login_name='${login_name}'`, (err, results) => {
                 if(err) {
                     return res.send(err);
                 } else {
@@ -67,7 +66,8 @@ exports.loginAccount = (req, res) => {
                         
                         let dataValues = {
                             login: results[0].login_name,
-                            password: results[0].password_login
+                            password: results[0].password_login,
+                            user_id: results[0].user_id
                         }
                         
                         if(bcrypt.compareSync(password, dataValues.password)) {
@@ -110,14 +110,19 @@ exports.indexAccountsBank = (req, res) => {
 
 // Getting an specific account bank account by id
 exports.getAccountBankByID = (req, res) => {
-    const { user_id } = req.body;
+    const { user_id } = req.query;
     (async () => {
         try {
             await db_connection.query(`SELECT * FROM AccountsBank where user_id = '${user_id}'`, (err, results) => {
                 if(err) {
                     return res.send(err);
                 } else {
-                    return res.json({ results });
+                    if(results.length > 0)
+                        var userAccountBank = {
+                            account_type: results[0].account_type,
+                            balance: results[0].balance
+                        } 
+                    return res.send(userAccountBank);
                 }  
             });
         } finally {
@@ -292,3 +297,44 @@ exports.loginUser = (req, res) => {
         })()
     })
 }
+
+exports.insertDeposit = (req, res) => {
+    const { user_id, value } = req.body;
+
+    (async () => {
+        try {
+            let INSERT_DEBIT_TRACK = `INSERT INTO DepositTrack (user_id, value)
+            VALUES ('${user_id}', '${value}')`;
+            await db_connection.query(INSERT_DEBIT_TRACK, (err, results) => {
+                if(err) {
+                    return res.send(err);
+                } else {
+                    return res.send(JSON.stringify(results));
+                }
+            });
+        } finally {
+            db_connection.end()
+        }
+    })()
+}
+
+exports.udpateDebitBalance = (req, res) => {
+    const { user_id, value } = req.body;
+
+    (async () => {
+        try {
+            let UPDATE_DEBIT_BALANCE = 
+            `UPDATE AccountsBank SET balance = balance + ${value} WHERE user_id = ${user_id}`;
+            await db_connection.query(UPDATE_DEBIT_BALANCE, (err, results) => {
+                if(err) {
+                    return res.send(err);
+                } else {
+                    return res.send(JSON.stringify(results));
+                }
+            });
+        } finally {
+            db_connection.end()
+        }
+    })()
+}
+
