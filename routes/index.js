@@ -18,7 +18,6 @@ router.route('/user')
     .get(userController.indexUser)
     .post(userController.createUser);
 
-
 router.route('/adress')
     .get(userController.indexAdress)
     .post(userController.createAdress);
@@ -31,6 +30,9 @@ router.route('/account_bank')
     .get(userController.indexAccountsBank)
     .post(userController.createAccountBank);
 
+router.route('/credit_card_by_account_bank_id')
+    .get(userController.getCreditCardById);
+
 router.route('/account_bank_by_id')
     .get(userController.getAccountBankByID);
 
@@ -42,6 +44,9 @@ router.route('/insert_deposit')
 
 router.route('/update_debit_balance')
     .post(userController.udpateDebitBalance);
+
+router.route('/create_credit_card')
+    .post(userController.createCreditCard);
 
 
 module.exports = router;

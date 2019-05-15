@@ -119,6 +119,7 @@ exports.getAccountBankByID = (req, res) => {
                 } else {
                     if(results.length > 0)
                         var userAccountBank = {
+                            account_bank_id: results[0].Id,
                             account_type: results[0].account_type,
                             balance: results[0].balance
                         } 
@@ -139,7 +140,7 @@ exports.indexCreditCards = (req, res) => {
                 if(err) {
                     return res.send(err);
                 } else {
-                    return res.json({ results });
+                    return res.json( results );
                 }  
             });
         } finally {
@@ -149,15 +150,18 @@ exports.indexCreditCards = (req, res) => {
 };
 
 // Getting an specific creditcard
-exports.getCreditCardById= (req, res) => {
-    const { account_bank_id } = req.body; 
+exports.getCreditCardById = (req, res) => {
+    const { account_bank_id } = req.query;
+    
     (async () => {
         try {
-            await db_connection.query(`SELECT * FROM CreditCards where account_bank_id = '${account_bank_id}'`, (err, results) => {
+            await db_connection.query(`SELECT * FROM CreditCards WHERE account_bank_id = '${account_bank_id}'`, (err, results) => {
                 if(err) {
                     return res.send(err);
                 } else {
-                    return res.json({ results });
+                    if(results.length > 0 )
+                        return res.json({ results });
+                    
                 }  
             });
         } finally {
@@ -256,6 +260,8 @@ exports.createAccountBank = (req, res) => {
 
 exports.createCreditCard = (req, res) => {
     const { code, balance, credit_line, password_cd, due_date, account_bank_id } = req.body;
+
+    console.log(req.body)
 
     bcrypt.hash(password_cd, 10, (err, hash) => {
         (async () => {
