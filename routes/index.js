@@ -16,19 +16,19 @@ router.get('/', (req, res) => {
 
 router.route('/user')
     .get(userController.indexUser)
-    .post(userController.createUser);
+    .post(function(req, res) {userController.createUser});
 
 router.route('/adress')
     .get(userController.indexAdress)
-    .post(userController.createAdress);
+    .post(function(req, res) {userController.createAdress});
 
 router.route('/account_login')
     .get(userController.indexAccountsLogin)
-    .post(userController.createAccountLogin);
+    .post(function(req, res) {userController.createAccountLogin});
 
 router.route('/account_bank')
     .get(userController.indexAccountsBank)
-    .post(userController.createAccountBank);
+    .post(function(req, res) {userController.createAccountBank});
 
 router.route('/credit_card_by_account_bank_id')
     .get(userController.getCreditCardById);
@@ -40,13 +40,18 @@ router.route('/login')
     .get(userController.loginAccount);
 
 router.route('/insert_deposit')
-    .post(userController.insertDeposit);
+    .post(function(req, res) {userController.insertDeposit});
 
 router.route('/update_debit_balance')
-    .post(userController.udpateDebitBalance);
+    .post(function(req, res) {userController.udpateDebitBalance});
 
 router.route('/create_credit_card')
-    .post(userController.createCreditCard);
+    .post(function(req, res) { userController.createCreditCard });
 
+router.route('/list_users')
+    .get(userController.getUsers);
+
+router.route('/list_of_possible_friends')
+    .get(userController.getPossibleFriends);
 
 module.exports = router;

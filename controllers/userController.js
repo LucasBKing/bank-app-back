@@ -19,6 +19,24 @@ exports.indexUser = (req, res) => {
     })()
 };
 
+// Getting an specific user
+exports.getUsers = (req, res) => {
+    const { user_id } = req.query;
+    (async () => {
+        try {
+            await db_connection.query(`SELECT * FROM Users WHERE Id != '${user_id}'`, (err, results) => {
+                if(err) {
+                    return res.send(err);
+                } else {
+                    return res.json({ results });
+                }  
+            });
+        } finally {
+            db_connection.end();
+        }
+    })()
+};
+
 // Getting all adresses
 exports.indexAdress = (req, res) => {
     (async () => {
@@ -170,16 +188,20 @@ exports.getCreditCardById = (req, res) => {
     })()
 };
 
-exports.createAdress = (req, res) => {
-    const { city, uf, street, num, neighborhood, zipcode } = req.body;
+exports.getPossibleFriends = (req, res) => {
+    const { user_id } = req.query;
+    console.log(user_id);
 
     (async () => {
         try {
             // First of all register the adress
-            let INSERT_ADRESS = `INSERT INTO Adresses (street, num, neighborhood, city, uf, zipcode) 
-            VALUES ('${street}', '${num}', '${neighborhood}', '${city}', '${uf}', '${zipcode}')`;
+            let GET_POSSIBLE_FRIENDS = `SELECT *
+            FROM Users
+            LEFT JOIN Friends
+            on Users.Id = Friends.account_login_id
+            WHERE Users.Id != '${user_id}'`;
 
-            await db_connection.query(INSERT_ADRESS, (err, result) => {
+            await db_connection.query(GET_POSSIBLE_FRIENDS, (err, result) => {
                 if (err) {
                     res.send(`Error: ${err}`);
                 } else {
