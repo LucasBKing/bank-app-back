@@ -19,7 +19,7 @@ exports.indexUser = (req, res) => {
     })()
 };
 
-// Getting an specific user
+// Getting all users, but not the current
 exports.getUsers = (req, res) => {
     const { user_id } = req.query;
     (async () => {
@@ -37,15 +37,16 @@ exports.getUsers = (req, res) => {
     })()
 };
 
-// Getting all adresses
-exports.indexAdress = (req, res) => {
+// Getting all users, but not the current
+exports.getUser = (req, res) => {
+    const { user_id } = req.query;
     (async () => {
         try {
-            await db_connection.query(`SELECT * FROM Adresses`, (err, results) => {
+            await db_connection.query(`SELECT * FROM Users WHERE Id = '${user_id}'`, (err, results) => {
                 if(err) {
                     return res.send(err);
                 } else {
-                    return res.json({ results });
+                    return res.send(JSON.stringify(results));
                 }  
             });
         } finally {
@@ -76,7 +77,7 @@ exports.loginAccount = (req, res) => {
     const { login_name, password } = req.query;
     (async () => {
         try {
-            await db_connection.query(`SELECT login_name, password_login, user_id FROM AccountsLogin WHERE login_name='${login_name}'`, (err, results) => {
+            await db_connection.query(`SELECT login_name, password_login, user_id, Id FROM AccountsLogin WHERE login_name='${login_name}'`, (err, results) => {
                 if(err) {
                     return res.send(err);
                 } else {
@@ -85,7 +86,8 @@ exports.loginAccount = (req, res) => {
                         let dataValues = {
                             login: results[0].login_name,
                             password: results[0].password_login,
-                            user_id: results[0].user_id
+                            user_id: results[0].user_id,
+                            login_id: results[0].Id
                         }
                         
                         if(bcrypt.compareSync(password, dataValues.password)) {
@@ -188,18 +190,37 @@ exports.getCreditCardById = (req, res) => {
     })()
 };
 
-exports.getPossibleFriends = (req, res) => {
+exports.getFriendsList = (req, res) => {
     const { user_id } = req.query;
-    console.log(user_id);
+    (async () => {
+        try {
+            let GET_FRIENDS = `SELECT *
+            FROM Friends
+            WHERE account_login_id = '${user_id}'`;
+
+            await db_connection.query(GET_FRIENDS, (err, result) => {
+                if (err) {
+                    res.send(`Error: ${err}`);
+                } else {
+                    return res.send(JSON.stringify(result));
+                }
+            })            
+        } finally {
+            db_connection.end();
+        }
+    })()
+}
+
+exports.getPossibleFriends = (req, res) => {
+    const { user_id, account_login_id } = req.query;
 
     (async () => {
         try {
-            // First of all register the adress
-            let GET_POSSIBLE_FRIENDS = `SELECT *
+            let GET_POSSIBLE_FRIENDS = `SELECT Users.Id, Users.first_name, Users.last_name
             FROM Users
             LEFT JOIN Friends
-            on Users.Id = Friends.account_login_id
-            WHERE Users.Id != '${user_id}'`;
+            on Users.Id != Friends.account_to
+            WHERE Users.id != '${user_id}' AND Friends.account_login_id != '${account_login_id}'`;
 
             await db_connection.query(GET_POSSIBLE_FRIENDS, (err, result) => {
                 if (err) {
@@ -214,13 +235,34 @@ exports.getPossibleFriends = (req, res) => {
     })()
 };
 
-exports.createUser = (req, res) => {
-    const { first_name, last_name, email, phone, birthday, adress_id, CPF } = req.body;
+exports.addFriend = (req, res) => {
+    const { account_to, account_login_id } = req.body;
 
     (async () => {
         try {
-            let INSERT_USER = `INSERT INTO Users (first_name, last_name, email, phone, birthday, adress_id, CPF) 
-            VALUES ('${first_name}', '${last_name}', '${email}', '${phone}', '${birthday}', '${adress_id}', '${CPF}')`;
+            let ADD_TO_FRIEND_LIST= `INSERT INTO Friends (account_to, status, account_login_id)
+            VALUES ('${account_to}', 'Enviado', '${account_login_id}')`;
+
+            await db_connection.query(ADD_TO_FRIEND_LIST, (err, result) => {
+                if (err) {
+                    res.send(`Error: ${err}`);
+                } else {
+                    return res.send(JSON.stringify(result));
+                }
+            })            
+        } finally {
+            db_connection.end();
+        }
+    })()
+}
+
+exports.createUser = (req, res) => {
+    const { first_name, last_name, email, phone, CPF } = req.body;
+
+    (async () => {
+        try {
+            let INSERT_USER = `INSERT INTO Users (first_name, last_name, email, phone, CPF) 
+            VALUES ('${first_name}', '${last_name}', '${email}', '${phone}', '${CPF}')`;
 
             await db_connection.query(INSERT_USER, (err, results) => {
                 if(err) {
