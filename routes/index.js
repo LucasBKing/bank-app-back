@@ -56,7 +56,19 @@ router.route('/add_friend')
 router.route('/friends_list')
     .get(userController.getFriendsList);
 
+router.route('/update_request_friend')
+    .post(userController.updateFriendRequest);
+
 router.route('/get_user')
     .get(userController.getUser);
+
+router.route('/get_friends_requests')
+    .get(userController.getFriendsRequests);
+
+router.route('/get_stats_users_request')
+    .get(userController.getStatUserRequest);
+
+router.route('/account_login_by_id')
+    .get(userController.getAccountLoginById);
 
 module.exports = router;

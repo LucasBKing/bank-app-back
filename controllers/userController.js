@@ -190,15 +190,102 @@ exports.getCreditCardById = (req, res) => {
     })()
 };
 
-exports.getFriendsList = (req, res) => {
+exports.getStatUserRequest = (req, res) => {
+    const { account_login_id } = req.query;
+    (async () => {
+        try {
+            let GET_FRIENDS = ` SELECT *
+            FROM Users AS A
+            INNER JOIN AccountsLogin AS B on A.Id = B.user_id WHERE B.Id = '${account_login_id}'`;
+
+            await db_connection.query(GET_FRIENDS, (err, result) => {
+                if (err) {
+                    res.send(`Error: ${err}`);
+                } else {
+                    return res.send(JSON.stringify(result));
+                }
+            })            
+        } finally {
+            db_connection.end();
+        }
+    })()
+}
+
+exports.getAccountLoginById = (req, res) => {
     const { user_id } = req.query;
+
+    (async () => {
+        try {
+            let GET_USER_ID = `SELECT Id
+            FROM AccountsLogin
+            WHERE user_id = '${user_id}'`;
+
+            await db_connection.query(GET_USER_ID, (err, result) => {
+                if (err) {
+                    res.send(`Error: ${err}`);
+                } else {
+                    return res.send(JSON.stringify(result));
+                }
+            })            
+        } finally {
+            db_connection.end();
+        }
+    })()
+}
+
+exports.getFriendsRequests = (req, res) => {
+    const { user_id } = req.query;
+
     (async () => {
         try {
             let GET_FRIENDS = `SELECT *
             FROM Friends
-            WHERE account_login_id = '${user_id}'`;
+            WHERE account_to = '${user_id}' AND status="Enviado"`;
 
             await db_connection.query(GET_FRIENDS, (err, result) => {
+                if (err) {
+                    res.send(`Error: ${err}`);
+                } else {
+                    return res.send(JSON.stringify(result));
+                }
+            })            
+        } finally {
+            db_connection.end();
+        }
+    })()
+}
+
+
+exports.getFriendsList = (req, res) => {
+    const { account_login_id,  account_to} = req.query;
+    (async () => {
+        try {
+            let GET_FRIENDS = `SELECT *
+            FROM Friends
+            WHERE account_login_id = '${account_login_id}' OR account_to='${account_to}'`;
+
+            await db_connection.query(GET_FRIENDS, (err, result) => {
+                if (err) {
+                    res.send(`Error: ${err}`);
+                } else {
+                    return res.send(JSON.stringify(result));
+                }
+            })            
+        } finally {
+            db_connection.end();
+        }
+    })()
+}
+
+exports.updateFriendRequest = (req, res) => {
+    const { user_id, id, status } = req.body;
+    (async () => {
+        try {
+            let UPDATE_REQUEST = `UPDATE Friends
+            SET status = '${status}'
+            WHERE account_to = '${user_id}' AND account_login_id = '${id}'`;
+
+            await db_connection.query(UPDATE_REQUEST, (err, result) => {
                 if (err) {
                     res.send(`Error: ${err}`);
                 } else {
