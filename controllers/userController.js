@@ -72,7 +72,7 @@ exports.indexAccountsLogin = (req, res) => {
     })()
 };
 
-// Getting an specific login account
+
 exports.loginAccount = (req, res) => {
     const { login_name, password } = req.query;
     (async () => {
@@ -455,6 +455,26 @@ exports.loginUser = (req, res) => {
     })
 }
 
+exports.insertTransaction = (req, res) => {
+    const { to_who, account_bank_id, value } = req.body;
+
+    (async () => {
+        try {
+            let INSERT_TRANSACTION = `INSERT INTO Transactions (to_who, account_bank_id, value)
+            VALUES ('${to_who}','${account_bank_id}','${value}')`;
+            await db_connection.query(INSERT_TRANSACTION, (err, results) => {
+                if(err) {
+                    return res.send(err);
+                } else {
+                    return res.send(JSON.stringify(results));
+                }
+            });
+        } finally {
+            db_connection.end()
+        }
+    })()
+}
+
 exports.insertDeposit = (req, res) => {
     const { user_id, value } = req.body;
 
@@ -475,6 +495,26 @@ exports.insertDeposit = (req, res) => {
     })()
 }
 
+exports.getCurrentAccountBankBalance = (req, res) => {
+    const { account_bank_id } = req.query;
+
+    (async () => {
+        try {
+            let GET_CURRENT_DEBIT_BALANCE = 
+            `SELECT balance FROM AccountsBank WHERE Id = ${account_bank_id}`;
+            await db_connection.query(GET_CURRENT_DEBIT_BALANCE, (err, results) => {
+                if(err) {
+                    return res.send(err);
+                } else {
+                    return res.send(JSON.stringify(results[0].balance));
+                }
+            });
+        } finally {
+            db_connection.end()
+        }
+    })()
+}
+
 exports.udpateDebitBalance = (req, res) => {
     const { user_id, value } = req.body;
 
@@ -483,6 +523,26 @@ exports.udpateDebitBalance = (req, res) => {
             let UPDATE_DEBIT_BALANCE = 
             `UPDATE AccountsBank SET balance = balance + ${value} WHERE user_id = ${user_id}`;
             await db_connection.query(UPDATE_DEBIT_BALANCE, (err, results) => {
+                if(err) {
+                    return res.send(err);
+                } else {
+                    return res.send(JSON.stringify(results));
+                }
+            });
+        } finally {
+            db_connection.end()
+        }
+    })()
+}
+
+exports.updateCreditCardBalance = (req, res) => {
+    const { credit_card_id , value } = req.body;
+
+    (async () => {
+        try {
+            let UPDATE_CREDIT_CARD_BALANCE = 
+            `UPDATE CreditCards SET balance = balance + ${value} WHERE Id = ${credit_card_id}`;
+            await db_connection.query(UPDATE_CREDIT_CARD_BALANCE, (err, results) => {
                 if(err) {
                     return res.send(err);
                 } else {

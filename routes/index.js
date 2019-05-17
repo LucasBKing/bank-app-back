@@ -38,8 +38,17 @@ router.route('/login')
 router.route('/insert_deposit')
     .post(userController.insertDeposit);
 
+router.route('/insert_transaction')
+    .post(userController.insertTransaction);
+
 router.route('/update_debit_balance')
     .post(userController.udpateDebitBalance);
+
+router.route('/update_credit_card_balance')
+    .post(userController.updateCreditCardBalance);
+
+router.route('/get_current_debit_balance')
+    .get(userController.getCurrentAccountBankBalance);
 
 router.route('/create_credit_card')
     .post(userController.createCreditCard);
