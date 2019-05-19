@@ -2,6 +2,7 @@ let router = require('express').Router();
 let cors = require('cors');
 let userController = require('../controllers/userController');
 let login_accountController = require('../controllers/login_accountController')
+let transactionsController = require('../controllers/transactionsController');
 
 router.use(cors());
 
@@ -84,4 +85,6 @@ router.route('/get_stats_users_request')
 router.route('/account_login_by_id')
     .get(userController.getAccountLoginById);
 
+router.route('/get_transactions')
+    .get(transactionsController.getListTransactions);
 module.exports = router;

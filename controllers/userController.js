@@ -255,13 +255,13 @@ exports.getAccountLoginById = (req, res) => {
 }
 
 exports.getFriendsRequests = (req, res) => {
-    const { user_id } = req.query;
+    const { user_id, account_login_id } = req.query;
 
     (async () => {
         try {
             let GET_FRIENDS = `SELECT *
             FROM Friends
-            WHERE account_to = '${user_id}' AND status="Enviado"`;
+            WHERE account_to = '${user_id}' AND status="Enviado" AND action_id != '${account_login_id}'`;
 
             await db_connection.query(GET_FRIENDS, (err, result) => {
                 if (err) {
@@ -278,12 +278,12 @@ exports.getFriendsRequests = (req, res) => {
 
 
 exports.updateFriendRequest = (req, res) => {
-    const { user_id, id, status } = req.body;
+    const { user_id, account_login_id, status } = req.body;
     (async () => {
         try {
             let UPDATE_REQUEST = `UPDATE Friends
             SET status = '${status}'
-            WHERE account_to = '${user_id}' AND account_login_id = '${id}'`;
+            WHERE account_to = '${user_id}' AND account_login_id = '${account_login_id}'`;
 
             await db_connection.query(UPDATE_REQUEST, (err, result) => {
                 if (err) {
@@ -328,8 +328,8 @@ exports.addFriend = (req, res) => {
 
     (async () => {
         try {
-            let ADD_TO_FRIEND_LIST= `INSERT INTO Friends (account_to, status, account_login_id)
-            VALUES ('${account_to}', 'Enviado', '${account_login_id}')`;
+            let ADD_TO_FRIEND_LIST= `INSERT INTO Friends (account_to, status, account_login_id, action_id)
+            VALUES ('${account_to}', 'Enviado', '${account_login_id}', '${account_login_id}')`;
 
             await db_connection.query(ADD_TO_FRIEND_LIST, (err, result) => {
                 if (err) {
