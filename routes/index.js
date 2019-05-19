@@ -1,6 +1,7 @@
 let router = require('express').Router();
 let cors = require('cors');
 let userController = require('../controllers/userController');
+let login_accountController = require('../controllers/login_accountController')
 
 router.use(cors());
 
@@ -28,6 +29,9 @@ router.route('/account_bank')
 
 router.route('/credit_card_by_account_bank_id')
     .get(userController.getCreditCardById);
+
+router.route('/user_id_by_account_login_id')
+    .get(userController.getUserIdByAccountLogin);    
 
 router.route('/account_bank_by_id')
     .get(userController.getAccountBankByID);
@@ -63,7 +67,7 @@ router.route('/add_friend')
     .post(userController.addFriend);
 
 router.route('/friends_list')
-    .get(userController.getFriendsList);
+    .get(login_accountController.getFriendsList);
 
 router.route('/update_request_friend')
     .post(userController.updateFriendRequest);

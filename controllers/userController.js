@@ -210,6 +210,27 @@ exports.getStatUserRequest = (req, res) => {
         }
     })()
 }
+exports.getUserIdByAccountLogin = (req, res) => {
+    const { account_login_id } = req.query;
+
+    (async () => {
+        try {
+            let GET_USER_ID = `SELECT user_id
+            FROM AccountsLogin
+            WHERE Id = '${account_login_id}'`;
+
+            await db_connection.query(GET_USER_ID, (err, result) => {
+                if (err) {
+                    res.send(`Error: ${err}`);
+                } else {
+                    return res.send(JSON.stringify(result));
+                }
+            })            
+        } finally {
+            db_connection.end();
+        }
+    })()
+}
 
 exports.getAccountLoginById = (req, res) => {
     const { user_id } = req.query;
@@ -256,27 +277,6 @@ exports.getFriendsRequests = (req, res) => {
 }
 
 
-exports.getFriendsList = (req, res) => {
-    const { account_login_id,  account_to} = req.query;
-    (async () => {
-        try {
-            let GET_FRIENDS = `SELECT *
-            FROM Friends
-            WHERE account_login_id = '${account_login_id}' OR account_to='${account_to}'`;
-
-            await db_connection.query(GET_FRIENDS, (err, result) => {
-                if (err) {
-                    res.send(`Error: ${err}`);
-                } else {
-                    return res.send(JSON.stringify(result));
-                }
-            })            
-        } finally {
-            db_connection.end();
-        }
-    })()
-}
-
 exports.updateFriendRequest = (req, res) => {
     const { user_id, id, status } = req.body;
     (async () => {
@@ -299,15 +299,16 @@ exports.updateFriendRequest = (req, res) => {
 }
 
 exports.getPossibleFriends = (req, res) => {
-    const { user_id, account_login_id } = req.query;
+    const { account_login_id, user_id } = req.query;
 
     (async () => {
         try {
-            let GET_POSSIBLE_FRIENDS = `SELECT Users.Id, Users.first_name, Users.last_name
-            FROM Users
-            LEFT JOIN Friends
-            on Users.Id != Friends.account_to
-            WHERE Users.id != '${user_id}' AND Friends.account_login_id != '${account_login_id}'`;
+
+            let GET_POSSIBLE_FRIENDS = `SELECT U.Id, U.first_name, U.last_name
+            FROM Users AS U
+            LEFT JOIN Friends AS F
+            on (F.account_login_id = '${account_login_id}' AND F.account_to = U.Id)
+            WHERE F.account_login_id is null and F.account_to is null and U.Id != '${user_id}'`;
 
             await db_connection.query(GET_POSSIBLE_FRIENDS, (err, result) => {
                 if (err) {
