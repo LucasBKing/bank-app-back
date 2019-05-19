@@ -6,7 +6,7 @@ exports.getFriendsList = (req, res) => {
         try {
             let GET_FRIENDS = `SELECT *
             FROM Friends
-            WHERE account_login_id = '${account_login_id}'`;
+            WHERE account_login_id = '${account_login_id}' AND status = 'Aceito'`;
 
             await db_connection.query(GET_FRIENDS, (err, result) => {
                 if (err) {

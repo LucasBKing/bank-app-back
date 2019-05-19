@@ -278,12 +278,12 @@ exports.getFriendsRequests = (req, res) => {
 
 
 exports.updateFriendRequest = (req, res) => {
-    const { user_id, account_login_id, status } = req.body;
+    const { account_to, account_login_id, status, action_id } = req.body;
     (async () => {
         try {
             let UPDATE_REQUEST = `UPDATE Friends
-            SET status = '${status}'
-            WHERE account_to = '${user_id}' AND account_login_id = '${account_login_id}'`;
+            SET status = "${status}", action_id = '${action_id}'
+            WHERE account_to = '${account_to}' AND account_login_id = '${account_login_id}'`;
 
             await db_connection.query(UPDATE_REQUEST, (err, result) => {
                 if (err) {

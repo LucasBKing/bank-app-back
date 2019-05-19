@@ -87,4 +87,8 @@ router.route('/account_login_by_id')
 
 router.route('/get_transactions')
     .get(transactionsController.getListTransactions);
+
+router.route('/udpate_transaction_status')
+    .post(transactionsController.updateTransactionStatus);
+    
 module.exports = router;

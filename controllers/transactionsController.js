@@ -21,3 +21,25 @@ exports.getListTransactions = (req, res) => {
         }
     })()
 }
+
+exports.updateTransactionStatus = (req, res) => {
+    const { Id } = req.body;
+
+    (async () => {
+        try {
+            let GET_FRIENDS = `UPDATE Transactions
+            SET status = 1
+            WHERE Id = '${Id}'`;
+
+            await db_connection.query(GET_FRIENDS, (err, result) => {
+                if (err) {
+                    res.send(`Error: ${err}`);
+                } else {
+                    return res.send(JSON.stringify(result));
+                }
+            })            
+        } finally {
+            db_connection.end();
+        }
+    })()
+}
