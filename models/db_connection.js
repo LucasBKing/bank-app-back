@@ -3,10 +3,10 @@ const mysql = require('mysql');
 
 const pool =  mysql.createPool({
     connectionLimit: 10,
-    host: 'localhost',
-    user: 'root',
-    password: '44223820lu4422l',
-    database: 'appHeroku'
+    host: 'XXXX',
+    user: 'XXXX',
+    password: 'XXXXX',
+    database: 'ekkiDatabase'
 });
 
 // ping database to check for common exception errors
