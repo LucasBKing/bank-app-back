@@ -1,8 +1,12 @@
 let router = require('express').Router();
 let cors = require('cors');
 let userController = require('../controllers/userController');
-let login_accountController = require('../controllers/login_accountController')
+let loginAccountController = require('../controllers/loginAccountController')
 let transactionsController = require('../controllers/transactionsController');
+let accountBankController = require('../controllers/accountBankController');
+let creditCardController = require('../controllers/creditCardController');
+let friendsController = require('../controllers/friendsController');
+let depositController = require('../controllers/depositController');
 
 router.use(cors());
 
@@ -21,69 +25,72 @@ router.route('/user')
     .post(userController.createUser);
 
 router.route('/account_login')
-    .get(userController.indexAccountsLogin)
-    .post(userController.createAccountLogin);
+    .get(loginAccountController.indexAccountsLogin)
+    .post(loginAccountController.createAccountLogin);
 
 router.route('/account_bank')
-    .get(userController.indexAccountsBank)
-    .post(userController.createAccountBank);
+    .get(accountBankController.indexAccountsBank)
+    .post(accountBankController.createAccountBank);
 
 router.route('/credit_card_by_account_bank_id')
-    .get(userController.getCreditCardById);
+    .get(creditCardController.getCreditCardById);
 
 router.route('/user_id_by_account_login_id')
     .get(userController.getUserIdByAccountLogin);    
 
 router.route('/account_bank_by_id')
-    .get(userController.getAccountBankByID);
+    .get(accountBankController.getAccountBankByID);
 
 router.route('/login')
-    .get(userController.loginAccount);
+    .get(loginAccountController.loginAccount);
 
 router.route('/insert_deposit')
-    .post(userController.insertDeposit);
+    .post(depositController.insertDeposit);
 
 router.route('/insert_transaction')
-    .post(userController.insertTransaction);
+    .post(transactionsController.insertTransaction);
 
 router.route('/update_debit_balance')
-    .post(userController.udpateDebitBalance);
+    .post(depositController.udpateDebitBalance);
 
 router.route('/update_credit_card_balance')
-    .post(userController.updateCreditCardBalance);
+    .post(creditCardController.updateCreditCardBalance);
 
 router.route('/get_current_debit_balance')
-    .get(userController.getCurrentAccountBankBalance);
+    .get(accountBankController.getCurrentAccountBankBalance);
 
 router.route('/create_credit_card')
-    .post(userController.createCreditCard);
+    .post(creditCardController.createCreditCard);
 
 router.route('/list_users')
     .get(userController.getUsers);
 
 router.route('/list_of_possible_friends')
-    .get(userController.getPossibleFriends);
+    .get(friendsController.getPossibleFriends);
 
 router.route('/add_friend')
-    .post(userController.addFriend);
+    .post(friendsController.addFriend);
 
 router.route('/friends_list')
-    .get(login_accountController.getFriendsList);
+    .get(friendsController.getFriendsList);
 
 router.route('/update_request_friend')
-    .post(userController.updateFriendRequest);
+    .post(friendsController.updateFriendRequest);
 
 router.route('/get_user')
     .get(userController.getUser);
 
+router.route('/user_by_account_bank_id')
+    .get(accountBankController.getUserByAccountBankId);
+
 router.route('/get_friends_requests')
-    .get(userController.getFriendsRequests);
+    .get(friendsController.getFriendsRequests);
 
 router.route('/get_stats_users_request')
     .get(userController.getStatUserRequest);
 
 router.route('/account_login_by_id')
-    .get(userController.getAccountLoginById);
+    .get(loginAccountController.getAccountLoginById);
 
 router.route('/get_transactions')
     .get(transactionsController.getListTransactions);

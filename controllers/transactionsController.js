@@ -43,3 +43,23 @@ exports.updateTransactionStatus = (req, res) => {
         }
     })()
 }
+
+exports.insertTransaction = (req, res) => {
+    const { to_who, account_bank_id, value } = req.body;
+
+    (async () => {
+        try {
+            let INSERT_TRANSACTION = `INSERT INTO Transactions (to_who, account_bank_id, value)
+            VALUES ('${to_who}','${account_bank_id}','${value}')`;
+            await db_connection.query(INSERT_TRANSACTION, (err, results) => {
+                if(err) {
+                    return res.send(err);
+                } else {
+                    return res.send(JSON.stringify(results));
+                }
+            });
+        } finally {
+            db_connection.end()
+        }
+    })()
+}
